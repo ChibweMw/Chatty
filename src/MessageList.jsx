@@ -5,9 +5,12 @@ import Notification from './Notification.jsx'
 
 class MessageList extends Component {
   render() {
+    const availableMessages = this.props.message
     return (
       <main className="messages">
-        <Message />
+        {availableMessages.map(userMessage => {
+            return <Message singleMessage={userMessage} key={userMessage.id}/>
+        })}
         <Notification />
       </main>
     );
