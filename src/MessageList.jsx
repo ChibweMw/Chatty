@@ -8,8 +8,8 @@ class MessageList extends Component {
     const availableMessages = this.props.message
     return (
       <main className="messages">
-        {availableMessages.map(userMessage => {
-            return <Message singleMessage={userMessage} key={userMessage.id}/>
+        {availableMessages.map((userMessage, id) => {
+            return <Message singleMessage={userMessage} key={id}/>
         })}
         <Notification />
       </main>
