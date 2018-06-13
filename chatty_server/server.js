@@ -12,7 +12,26 @@ const wss = new SocketServer.Server({ server });
 
 wss.on('connection', (ws) => {
   console.log('Client connected');
-  ws.on('close', () => console.log('Client disconnected'));
+  const userCount = wss.clients.size;
+
+  console.log(`USERS LOGGED IN ${userCount}`);
+
+  wss.broadcast = function broadcast(data) {
+    console.log(data)
+    wss.clients.forEach(function each(client) {
+      if (client.readyState === SocketServer.OPEN) {
+        client.send(JSON.stringify({type: "userCounter", content: data}));
+      }
+    });
+  };
+
+  wss.broadcast(userCount);
+
+  ws.on('close', () => {
+    console.log('Client disconnected')
+    console.log(`USERS LOGGED IN ${userCount}`)
+    wss.broadcast(userCount);
+  });
   ws.on('message', function incoming(data) {
 
     const incomingMessage = JSON.parse(data);
@@ -32,12 +51,18 @@ wss.on('connection', (ws) => {
           case "postNotification":
             client.send(JSON.stringify({
                                   type: "incomingNotification",
+                                  id: uuidv1(),
                                   content: incomingMessage.content
                                 }));
             break;
         }
+        // client.send(JSON.stringify({
+        //   type: "incomingNotification",
+        //   id: uuidv1(),
+        //   content: `${ws} `
+        //   }));
+        // }
       }
     });
-
   });
 });
