@@ -7,27 +7,22 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    this.socket = new WebSocket("ws://localhost:3001")
     this.state = {
-      currentUser: {name: "Bob"},
-      messages: [
-        {
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      currentUser: {name: "Kamina"},
+      messages: []
     }
   }
 
   addMessage = (e) => {
     if(e.keyCode == 13 && e.shiftKey == false) {
-      console.log("NEW MESSAGE:", e.target.value,"BY", this.state.currentUser.name);
+      const newMessage = { username: this.state.currentUser.name, content:e.target.value}
+      this.socket.send(JSON.stringify(newMessage))
+      // this.socket.send(`USER ${this.state.currentUser.name} SAID ${e.target.value}`)
+      /*console.log("NEW MESSAGE:", e.target.value,"BY", this.state.currentUser.name);
       const newMessage = { username: this.state.currentUser.name, content:e.target.value};
       const messages = this.state.messages.concat(newMessage);
-      this.setState({messages: messages});
+      this.setState({messages: messages});*/
       e.target.value = "";
     }
   }
