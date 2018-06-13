@@ -16,11 +16,18 @@ wss.on('connection', (ws) => {
   ws.on('message', function incoming(data) {
 
     const incomingMessage = JSON.parse(data);
+    console.log(incomingMessage)
     incomingMessage.id = uuidv1();
+
 
     wss.clients.forEach(function each(client) {
       if (client.readyState === SocketServer.OPEN) {
-        client.send(JSON.stringify(incomingMessage));
+        client.send(JSON.stringify({
+                              type: "incomingMessage",
+                              id: incomingMessage.id,
+                              username: incomingMessage.username,
+                              content: incomingMessage.content
+                            }));
       }
     });
 
