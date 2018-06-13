@@ -10,14 +10,16 @@ const server = express()
 
 const wss = new SocketServer.Server({ server });
 
+let userCount = 0;
+
 wss.on('connection', (ws) => {
   console.log('Client connected');
-  const userCount = wss.clients.size;
+  userCount += 1;
 
-  console.log(`USERS LOGGED IN ${userCount}`);
+  console.log(`FIRST USER COUNT ${userCount}`);
 
   wss.broadcast = function broadcast(data) {
-    console.log(data)
+    // console.log("HAHAHAHAHAHAHAHAHAHA",data)
     wss.clients.forEach(function each(client) {
       if (client.readyState === SocketServer.OPEN) {
         client.send(JSON.stringify({type: "userCounter", content: data}));
@@ -30,6 +32,7 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('Client disconnected')
     console.log(`USERS LOGGED IN ${userCount}`)
+    userCount -= 1;
     wss.broadcast(userCount);
   });
   ws.on('message', function incoming(data) {
