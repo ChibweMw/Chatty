@@ -28,6 +28,11 @@ class App extends Component {
     }
   }
 
+  changeUserName = (e) => {
+    console.log(this.state.currentUser.name)
+    this.setState({currentUser: {name: e.target.value}})
+  }
+
   componentDidMount () {
     console.log("componentDidMount <App />");
     setTimeout(() => {
@@ -45,7 +50,7 @@ class App extends Component {
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList message={this.state.messages}/>
-        <ChatBar currName={this.state.currentUser} sendMessage={this.addMessage}/>
+        <ChatBar currName={this.state.currentUser} sendMessage={this.addMessage} editUserName={this.changeUserName}/>
       </div>
     );
   }
