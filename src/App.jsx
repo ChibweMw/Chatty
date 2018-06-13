@@ -18,11 +18,12 @@ class App extends Component {
     if(e.keyCode == 13 && e.shiftKey == false) {
       const newMessage = { username: this.state.currentUser.name, content:e.target.value}
       this.socket.send(JSON.stringify(newMessage))
-      // this.socket.send(`USER ${this.state.currentUser.name} SAID ${e.target.value}`)
-      /*console.log("NEW MESSAGE:", e.target.value,"BY", this.state.currentUser.name);
-      const newMessage = { username: this.state.currentUser.name, content:e.target.value};
-      const messages = this.state.messages.concat(newMessage);
-      this.setState({messages: messages});*/
+      this.socket.onmessage = (event) => {
+        console.log(event.data);
+        const receivedMessage = JSON.parse(event.data);
+        const messages = this.state.messages.concat(receivedMessage);
+        this.setState({messages: messages});
+      }
       e.target.value = "";
     }
   }
