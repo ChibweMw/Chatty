@@ -12,60 +12,57 @@ const wss = new SocketServer.Server({ server });
 
 let userCount = 0;
 
-wss.on('connection', (ws) => {
-  console.log('Client connected');
-  userCount += 1;
+const colorPicker = () => {
+  let colors = ["darkslateblue", "crimson", "orange", "purple", "limegreen"]
+  let userColor = Math.floor(Math.random() * colors.length)
+  return colors[userColor];
+}
 
-  console.log(`FIRST USER COUNT ${userCount}`);
-
-  wss.broadcast = function broadcast(data) {
-    // console.log("HAHAHAHAHAHAHAHAHAHA",data)
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === SocketServer.OPEN) {
-        client.send(JSON.stringify({type: "userCounter", content: data}));
-      }
-    });
-  };
-
-  wss.broadcast(userCount);
-
-  ws.on('close', () => {
-    console.log('Client disconnected')
-    console.log(`USERS LOGGED IN ${userCount}`)
-    userCount -= 1;
-    wss.broadcast(userCount);
+function broadcast(data) {
+  const payload = JSON.stringify(data);
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === SocketServer.OPEN) {
+      client.send(payload);
+    }
   });
-  ws.on('message', function incoming(data) {
+}
+
+function broadcastUserCount() {
+  broadcast({ type: 'userCounter', content: wss.clients.size });
+}
+
+wss.on('connection', (client) => {
+  console.log('Client connected');
+  const color = colorPicker();
+  broadcastUserCount();
+
+  client.on('close', () => {
+    broadcastUserCount();
+  });
+
+
+  client.on('message', function incoming(data) {
 
     const incomingMessage = JSON.parse(data);
-    console.log(incomingMessage)
+    console.log(incomingMessage);
 
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === SocketServer.OPEN) {
-        switch(incomingMessage.type) {
-          case "postMessage":
-            client.send(JSON.stringify({
-                                  type: "incomingMessage",
-                                  id: uuidv1(),
-                                  username: incomingMessage.username,
-                                  content: incomingMessage.content
-                                }));
-            break;
-          case "postNotification":
-            client.send(JSON.stringify({
-                                  type: "incomingNotification",
-                                  id: uuidv1(),
-                                  content: incomingMessage.content
-                                }));
-            break;
-        }
-        // client.send(JSON.stringify({
-        //   type: "incomingNotification",
-        //   id: uuidv1(),
-        //   content: `${ws} `
-        //   }));
-        // }
-      }
-    });
+    switch(incomingMessage.type) {
+      case "postMessage":
+        broadcast({
+          type: "incomingMessage",
+          id: uuidv1(),
+          username: incomingMessage.username,
+          content: incomingMessage.content,
+          color: color
+        });
+        break;
+      case "postNotification":
+        broadcast({
+          type: "incomingNotification",
+          id: uuidv1(),
+          content: incomingMessage.content
+        });
+        break;
+    }
   });
 });
