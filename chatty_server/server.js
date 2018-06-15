@@ -13,7 +13,7 @@ const wss = new SocketServer.Server({ server });
 let userCount = 0;
 
 const colorPicker = () => {
-  let colors = ["darkslateblue", "crimson", "orange", "purple", "limegreen"]
+  let colors = ["mediumturquoise", "mediumseagreen", "orange", "gold", "steelblue"]
   let userColor = Math.floor(Math.random() * colors.length)
   return colors[userColor];
 }
@@ -39,7 +39,6 @@ wss.on('connection', (client) => {
   client.on('close', () => {
     broadcastUserCount();
   });
-
 
   client.on('message', function incoming(data) {
 
