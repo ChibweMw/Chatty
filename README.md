@@ -5,7 +5,7 @@ A Realtime websocket powered chat application. It supports images, and custom us
 
 ## Screenshots
 
-["Chatty chatroom messages"](https://github.com/ChibweMw/Chatty/blob/master/docs/ChatRoom.png?raw=true)
+!["Chatty chatroom messages"](https://github.com/ChibweMw/Chatty/blob/master/docs/ChatRoom.png?raw=true)
 
 # Get Chatty
 ```
