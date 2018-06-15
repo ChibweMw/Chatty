@@ -9,10 +9,11 @@ class MessageList extends Component {
     return (
       <main className="messages">
         {availableMessages.map((userMessage) => {
-          if(userMessage.type === "incomingMessage") {
-            return <Message singleMessage={userMessage} key={userMessage.id}/>
-          } else if (userMessage.type === "incomingNotification") {
-            return <Notification notify={userMessage} key={userMessage.id}/>
+          if (userMessage.type === "incomingNotification") {
+            console.log("Message type is",userMessage.type)
+            return <Notification {...userMessage} key={userMessage.id}/>
+          } else if(userMessage.type === "incomingMessage" || "incomingImage") {
+            return <Message {...userMessage} key={userMessage.id}/>
           }
         })}
       </main>

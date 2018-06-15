@@ -14,11 +14,28 @@ class App extends Component {
     }
   }
 
-  handleMessage = (e) => {
-    if(e.keyCode == 13 && e.shiftKey == false) {
-      const newMessage = { type: "postMessage", username: this.state.currentUser.name || "Anonymous", content:e.target.value}
-      this.socket.send(JSON.stringify(newMessage));
+  handleOutgoingMessage = (e) => {
+    if(e.keyCode == 13 && e.shiftKey == false && e.target.value) {
+      const isImg = /https?:\/.*(?:.jpg|.png|.gif)/gi;
+      const imgMessage = {
+        type: "postImage",
+        username: this.state.currentUser.name || "Anonymous",
+        content:e.target.value.replace(isImg, ""),
+        image:e.target.value.match(isImg)
+      };
+      const textMessage = {
+        type: "postMessage",
+        username: this.state.currentUser.name || "Anonymous",
+        content:e.target.value
+      };
 
+      let newMessage = {};
+      if (e.target.value.match(isImg)) {
+        newMessage = imgMessage;
+      } else {
+        newMessage = textMessage;
+      }
+      this.socket.send(JSON.stringify(newMessage));
       e.target.value = "";
     }
   }
@@ -31,7 +48,6 @@ class App extends Component {
         content: this.state.currentUser.name ? `'${this.state.currentUser.name}' has changed their name to '${e.target.value}'`
         : `Welcome '${e.target.value}!'`
       }
-      console.log(newNotification);
       this.socket.send(JSON.stringify(newNotification));
     }
   }
@@ -42,8 +58,6 @@ class App extends Component {
     this.socket = new WebSocket("ws://localhost:3001")
 
     this.socket.onmessage = (event) => {
-      console.log(`Incoming Message: ${event.data} is a ${typeof(event.data)}`);
-
       const receivedMessage = JSON.parse(event.data);
 
       switch(receivedMessage.type){
@@ -52,16 +66,20 @@ class App extends Component {
           this.setState({messages: messages});
           break;
         case "incomingNotification":
-          console.log(`NOTIFICATION RECEIVED: ${receivedMessage.content}`);
           const newNotification = this.state.messages.concat(receivedMessage);
           this.setState({messages: newNotification});
           break;
         case "userCounter":
-          console.log(`USER COUNT CLIENT SIDE ${receivedMessage.content} is a ${typeof(receivedMessage.content)}`)
           this.setState({userCount: receivedMessage.content});
           break;
+        case "incomingImage":
+          let chatImage = (<div><img className="chat-img" src={receivedMessage.image[0]} /></div>);
+          receivedMessage.image = chatImage;
+          const newImageMessage = this.state.messages.concat(receivedMessage);
+          this.setState({messages: newImageMessage});
+          break;
         default:
-          console.error(`UNKNOWN DATA TYPE: ${receivedMessage.type}`);
+          console.error(`ERROR: UNKNOWN DATA TYPE: ${receivedMessage.type}`);
       }
     }
   }
@@ -71,10 +89,10 @@ class App extends Component {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
-          <h3 className="navbar-user-count">{this.state.userCount ? `${this.state.userCount} users online` : `No Users`}</h3>
+          <h3 className="navbar-user-count">{this.state.userCount ? `${this.state.userCount} Users Online` : `No Users Online`}</h3>
         </nav>
         <MessageList message={this.state.messages} />
-        <ChatBar currName={this.state.currentUser} sendMessage={this.handleMessage} editUserName={this.changeUserName}/>
+        <ChatBar currName={this.state.currentUser} sendMessage={this.handleOutgoingMessage} editUserName={this.changeUserName}/>
       </div>
     );
   }
