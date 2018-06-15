@@ -44,7 +44,6 @@ wss.on('connection', (client) => {
   client.on('message', function incoming(data) {
 
     const incomingMessage = JSON.parse(data);
-    console.log(incomingMessage);
 
     switch(incomingMessage.type) {
       case "postMessage":
@@ -63,6 +62,15 @@ wss.on('connection', (client) => {
           content: incomingMessage.content
         });
         break;
+      case "postImage":
+        broadcast({
+          type: "incomingImage",
+          id: uuidv1(),
+          username: incomingMessage.username,
+          content: incomingMessage.content,
+          image: incomingMessage.image,
+          color: color
+        })
     }
   });
 });
