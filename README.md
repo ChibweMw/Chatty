@@ -21,12 +21,14 @@ go to http://localhost:3000
 
 App Dependencies
 
-* babel-core
+* @babel/core
+* @babel/preset-env
+* @babel/preset-react
 * babel-loader
-* babel-preset-es2015
-* babel-preset-react
 * css-loader
-* node-sass
+* eslint
+* eslint-plugin-react
+* sass
 * sass-loader
 * sockjs-client
 * style-loader
