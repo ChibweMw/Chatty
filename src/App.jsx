@@ -58,6 +58,8 @@ class App extends Component {
     this.socket = new WebSocket("ws://localhost:3001")
 
     this.socket.onmessage = (event) => {
+    
+      
       const receivedMessage = JSON.parse(event.data);
 
       switch(receivedMessage.type){
@@ -81,6 +83,7 @@ class App extends Component {
         default:
           console.error(`ERROR: UNKNOWN DATA TYPE: ${receivedMessage.type}`);
       }
+
     }
   }
 
