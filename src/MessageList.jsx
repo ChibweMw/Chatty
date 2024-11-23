@@ -31,7 +31,7 @@ class MessageList extends Component {
     const availableMessages = this.props.message
     const numberOfMessages = availableMessages.length
     return (
-      <main className="messages" style={{paddingBottom: 20 + 'px'}}>
+      <main className="messages" style={{paddingBottom: 20 + 'px', wordWrap: 'normal'}}>
         {availableMessages.map((userMessage) => {
           if (userMessage.type === "incomingNotification") {
             console.log("Message type is",userMessage.type)
