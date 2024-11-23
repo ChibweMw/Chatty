@@ -23,7 +23,6 @@ class MessageList extends Component {
   Scroll = () => {
     console.log(`>> =======================`)
     if (this.scrollDiv) this.scrollDiv.scrollIntoView(true);
-    // if (this.scrollDiv) this.scrollDiv.scrollIntoView({ behavour: "smooth" });
   }
   // From Docs: "By default, the element is aligned to the top (or bottom) edge of the scrollable ancestor. 
   // To define a custom spacing, use 'scroll-margin-top' or 'scroll-margin-bottom'. 
@@ -43,7 +42,6 @@ class MessageList extends Component {
         })}
         { this.Scroll() }
         <div ref={ this.setScroll } ></div>
-        {/* <div ref={ this.setScroll } style={{paddingTop: 20 + 'px'}} ></div> */}
       </main>
     );
   }
